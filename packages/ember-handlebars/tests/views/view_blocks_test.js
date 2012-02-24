@@ -134,20 +134,24 @@ test("templates should yield to block, when the yield is embedded in a hierarchy
 });
 
 test("block should be able to pass parameters to yielded block", function() {
+  MyNumber = Ember.Object.extend({
+    number: 0
+  });
+    
   TemplateTests.TimesView = Ember.View.extend({
     template: Ember.Handlebars.compile('<div class="times">{{#each index}}{{yield count=this}}{{/each}}</div>'),
     n: null,
     index: Ember.computed(function() {
       var n = Ember.get(this, 'n'), indexArray = Ember.A([]);
       for (var i=0; i < n; i++) {
-        indexArray[i] = i;
+        indexArray[i] = MyNumber.create({number: i});
       }
       return indexArray;
     }).cacheable()
   });
   
   view = Ember.View.create({
-    template: Ember.Handlebars.compile('<div id="container"><div class="title">Counting to 5</div>{{#view TemplateTests.TimesView n=5}}<div class="times-item">{{count}}</div>{{/view}}</div>')
+    template: Ember.Handlebars.compile('<div id="container"><div class="title">Counting to 5</div>{{#view TemplateTests.TimesView n=5}}<div class="times-item">{{count.number}}</div>{{/view}}</div>')
   });
   
   Ember.run(function() {
